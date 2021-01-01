@@ -54,12 +54,7 @@
                     </tr>
                     </thead>
                     <tbody class="board-all">
-                    <!--<tr>
-                        <td>1</td>
-                        <td><a href="" id='bno-link'>Ante turpis integer aliquet porttitor.</a></td>
-                        <td>user0</td>
-                        <td>2020-12-17</td>
-                    </tr>-->
+
                     </tbody>
                     <tfoot>
                     <tr>
@@ -71,14 +66,32 @@
                     </tr>
                     </tfoot>
                 </table>
+                <div class="row search-div">
+                    <div class="col-3">
+                        <select name="search-type" id="search-type">
+                            <option value="">- 선택 -</option>
+                            <option value="T">제목</option>
+                            <option value="C">내용</option>
+                            <option value="W">작성자</option>
+                            <option value="TC">제목+내용</option>
+                            <option value="TCW">제목+내용+작성자 </option>
+                        </select>
+                    </div>
+                    <div class="col-7">
+                        <input type="text" name="search-keyword" id="search-keyword">
+                    </div>
+                    <div class="col-2">
+                        <a href="#" class="button primary search-btn">검색</a>
+                    </div>
+                </div>
             </div>
             <footer class="major">
-                <ul class="actions special">
-                    <ul class="actions">
-                        <li><input type="submit" value="Register" class="primary"/></li>
-                        <li><input type="reset" value="Reset"/></li>
-                    </ul>
-                </ul>
+<!--                <ul class="actions special">-->
+<!--                    <ul class="actions">-->
+<!--                        <li><input type="submit" value="Register" class="primary"/></li>-->
+<!--                        <li><input type="reset" value="Reset"/></li>-->
+<!--                    </ul>-->
+<!--                </ul>-->
             </footer>
         </section>
 
@@ -135,7 +148,7 @@
             <div id="myModal" class="modal">
 
                 <!-- Modal content -->
-                <div class="modal-content">
+                <div class="modal-content read-modal-content">
                     <div class="modal-header">
                         <span class="close">&times;</span>
                         <h2 class="modal-title"></h2>
@@ -145,6 +158,23 @@
                     <div class="modal-body">
                     </div>
                     <div class="modal-footer">
+                        <input type="button" value="수정" class="primary board-update-form-btn small"/>
+                        <input type="reset" value="삭제" class="small"/>
+                        <input type="hidden" value="" class="board-hidden-bno">
+                    </div>
+                </div>
+
+                <div class="modal-content update-modal-content">
+                    <div class="modal-header">
+                        <span class="close">&times;</span>
+                        <input type="text" value="" id="update-title">
+                    </div>
+                    <div class="modal-writer">
+                    </div>
+                    <div class="modal-body">
+                        <textarea name="content" rows="6" id="update-content"></textarea>
+                    </div>
+                    <div class="modal-footer">
                         <input type="button" value="수정" class="primary board-update-btn small"/>
                         <input type="reset" value="삭제" class="small"/>
                         <input type="hidden" value="" class="board-hidden-bno">
@@ -152,7 +182,6 @@
                 </div>
             </div>
         </section>
-
 
 
     </div>

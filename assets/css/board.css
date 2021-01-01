@@ -92,6 +92,10 @@
     border-top: 1px solid #ddd;
 }
 
+.update-modal-content {
+    display: none;
+}
+
 
 /*--------------- 페이징 ----------------*/
 .pagination {
@@ -125,4 +129,16 @@
 
 .board-table thead tr th {
     text-align: center;
+}
+
+/*--------------- 검색 ----------------*/
+.search-div{
+    margin: 0px;
+    width: 100%;
+}
+.search-div div {
+    padding: 0px 5px;
+}
+.search-btn {
+    min-width: 100%;
 }

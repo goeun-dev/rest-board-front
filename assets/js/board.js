@@ -1,12 +1,21 @@
 $(document).ready(function () {
 
+    var keyword = '';
+    var type = '';
+
     getList(1);
 
-    function getList(pageNum) {
+    // 리스트 조회
+    function getList(pageNum, keyword, type) {
 
         $.ajax({
             url: 'http://localhost:8080/board/',
-            data: {amount: 6, pageNum: pageNum},
+            data: {
+                amount: 6,
+                pageNum: pageNum,
+                type: type || '',
+                keyword: keyword || ''
+            },
             dataType: 'json',
             success: function (result) {
                 $('.board-all').html('');
@@ -25,6 +34,8 @@ $(document).ready(function () {
                         "\t</tr>"
                     );
                 }
+
+                // console.log(pg);
 
                 if (pg.prev) {
                     $('.pagination').append(
@@ -52,29 +63,23 @@ $(document).ready(function () {
         });
     }
 
-    $('.pagination').on('click', 'a', function (e) {
-        e.preventDefault();
-        getList($(this).data('pagenum'));
-    });
-
     // 게시글 조회
-    $('.board-all').on('click', '#bno-link', function (e) {
-        e.preventDefault();
-
-        var bno = $(this).data('bno');
-
+    function getBoardByBno(bno) {
         $.ajax({
             type: 'GET',
             url: 'http://localhost:8080/board/' + bno,
             dataType: 'json',
             success: function (result) {
-                $('.modal-title').html('');
-                $('.modal-body').html('');
+                $('.read-modal-content').css('display', 'block');
+                $('.update-modal-content').css('display', 'none');
+
+                $('.read-modal-content .modal-title').html('');
+                $('.read-modal-content .modal-body').html('');
                 $('.modal-writer').html('');
 
-                $('.modal-title').html(result.title);
+                $('.read-modal-content .modal-title').html(result.title);
                 $('.modal-writer').append('<p>' + result.writer + " (" + result.regDate.substring(0, 10) + ")" + '</p>');
-                $('.modal-body').append(result.content);
+                $('.read-modal-content .modal-body').append(result.content);
                 $('.board-hidden-bno').val(result.bno);
 
                 readModal.style.display = "block";
@@ -83,10 +88,37 @@ $(document).ready(function () {
                 console.log('Error: ' + request.responseText);
             }
         });
+    }
+
+    // 게시글 검색
+    $('.search-btn').on('click', function (e) {
+        e.preventDefault();
+        keyword = $('#search-keyword').val();
+        type = $('#search-type').val();
+
+
+        console.log(keyword, type)
+
+        getList(1, keyword, type);
     });
 
-    // 게시글 수정 버튼 클릭
-    $('.board-update-btn').on('click', function (e) {
+    // 페이지 선택
+    $('.pagination').on('click', 'a', function (e) {
+        e.preventDefault();
+        getList($(this).data('pagenum'), keyword, type);
+    });
+
+    // 게시글 선택 조회
+    $('.board-all').on('click', '#bno-link', function (e) {
+        e.preventDefault();
+
+        var bno = $(this).data('bno');
+
+        getBoardByBno(bno);
+    });
+
+    // 수정 버튼 클릭
+    $('.board-update-form-btn').on('click', function (e) {
         var bno = $('.board-hidden-bno').val();
 
         $.ajax({
@@ -94,11 +126,12 @@ $(document).ready(function () {
             url: 'http://localhost:8080/board/' + bno,
             dataType: 'json',
             success: function (result) {
-                $('.modal-title').html('');
-                $('.modal-body').html('');
+                $('.read-modal-content').css('display', 'none');
+                $('.update-modal-content').css('display', 'block');
 
-                $('.modal-title').html('<input type="text" value="' + result.title + '">');
-                $('.modal-body').append('<textarea name="content" rows="6">' + result.content + '"</textarea>');
+                $('.update-modal-content #update-title').val(result.title);
+                $('.update-modal-content #update-content').val(result.content);
+
                 readModal.style.display = "block";
 
             }, error: function (request, status, error) {
@@ -107,6 +140,31 @@ $(document).ready(function () {
         });
     });
 
+    // 게시글 수정
+    $('.board-update-btn').on('click', function (e) {
+        var bno = $('.board-hidden-bno').val();
+
+        var title = $('.update-modal-content #update-title').val();
+        var content = $('.update-modal-content #update-content').val();
+
+        console.log(title, content)
+
+        $.ajax({
+            type: 'PUT',
+            url: 'http://localhost:8080/board/',
+            data: {bno: bno, title: title, content: content},
+            success: function (result) {
+                console.log('success : ' + result);
+                getList();
+                getBoardByBno(bno);
+
+            }, error: function (request, status, error) {
+                console.log('Error: ' + request.responseText);
+            }
+        });
+    });
+
+    // 게시글 등록
     $('.board-register').on('click', function (e) {
         e.preventDefault();
 
@@ -133,21 +191,25 @@ $(document).ready(function () {
 });
 
 
+// 모달 관련 이벤트
 // Get the modal
 var readModal = document.getElementById("myModal");
-
 
 // Get the <span> element that closes the modal
 var span = document.getElementsByClassName("close")[0];
 
 // When the user clicks on <span> (x), close the modal
-span.onclick = function () {
+$('.close').on('click', function () {
+    $('.read-modal-content').css('display', 'block');
+    $('.update-modal-content').css('display', 'none');
     readModal.style.display = "none";
-}
+});
 
 // When the user clicks anywhere outside of the modal, close it
 window.onclick = function (event) {
-    if (event.target == modal) {
+    if (event.target == readModal) {
+        $('.read-modal-content').css('display', 'block');
+        $('.update-modal-content').css('display', 'none');
         readModal.style.display = "none";
     }
 }
