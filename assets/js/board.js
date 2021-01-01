@@ -2,19 +2,21 @@ $(document).ready(function () {
 
     var keyword = '';
     var type = '';
+    var page = 1;
 
     getList(1);
 
     // 리스트 조회
     function getList(pageNum, keyword, type) {
+        page = pageNum;
 
         $.ajax({
             url: 'http://localhost:8080/board/',
             data: {
                 amount: 6,
-                pageNum: pageNum,
-                type: type || '',
-                keyword: keyword || ''
+                pageNum: page,
+                type: type,
+                keyword: keyword
             },
             dataType: 'json',
             success: function (result) {
@@ -155,7 +157,7 @@ $(document).ready(function () {
             data: {bno: bno, title: title, content: content},
             success: function (result) {
                 console.log('success : ' + result);
-                getList();
+                getList(page, keyword, type);
                 getBoardByBno(bno);
 
             }, error: function (request, status, error) {
@@ -178,11 +180,31 @@ $(document).ready(function () {
             },
             success: function (result) {
                 console.log('success : ' + result);
-                getList();
+                getList(page, keyword, type);
                 location.href = '#all';
                 $('#reg-title').val('');
                 $('#reg-content').val('');
                 $('#reg-writer').val('');
+            }, error: function (request, status, error) {
+                console.log('Error: ' + request.responseText);
+            }
+        });
+    });
+
+    // 게시글 삭제
+    $('.board-delete').on('click', function (e) {
+        e.preventDefault();
+
+        $.ajax({
+            type: 'DELETE',
+            url: 'http://localhost:8080/board/',
+            data: {
+                bno: $('.board-hidden-bno').val(),
+            },
+            success: function (result) {
+                console.log('success : ' + result);
+                getList(page, keyword, type);
+                readModal.style.display = "none";
             }, error: function (request, status, error) {
                 console.log('Error: ' + request.responseText);
             }
